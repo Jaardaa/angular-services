@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-
+import { Component, OnInit, Version, VERSION } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Book } from "app/models/book";
 import { Observable } from "rxjs";
 
@@ -20,7 +20,9 @@ export class DashboardComponent implements OnInit {
   mostPopularBook: Book;
 
   constructor(private loggerService: LoggerService,
-              private dataService: DataService) {
+    private dataService: DataService,
+    private title: Title
+  ) {
     this.loggerService.log('creating the dashboard!')
   }
 
@@ -34,7 +36,33 @@ export class DashboardComponent implements OnInit {
       )
     this.mostPopularBook = this.dataService.mostPopularBook;
 
+    this.getAuthorRecommendationAsync(1);
+
+  // this.dataService.getAuthorRecommendation(1)
+  //     .then(
+  //       (author: string) => {
+  //         this.loggerService.log(author);
+  //         throw new Error('Problem in the success handler!')
+  //       },
+  //       (err: string) => this.loggerService.error(`The promise was rejected: ${err}`)
+  //     )
+  //     .catch((error: Error) => this.loggerService.error(error.message));
+
     this.loggerService.log('Done with dashboard initialization.');
+
+    this.title.setTitle(`Book Tracker ${VERSION.full}`)
+
+    throw new Error('Ugly technical error!');
+  }
+
+  private async getAuthorRecommendationAsync(readerID: number): Promise<void> {
+    try {
+      let author: string = await this.dataService.getAuthorRecommendation(readerID);
+      this.loggerService.log(author);
+    }
+    catch (error) {
+      this.loggerService.error(error);
+    }
   }
 
   deleteBook(bookID: number): void {

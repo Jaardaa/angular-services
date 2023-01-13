@@ -8,7 +8,7 @@ export class LoggerService {
     console.log(`${message} (${timeString})`);
   }
 
-  error(message: string): void {
-
+  error(message: any): void {
+    console.log(message)
   }
 }
